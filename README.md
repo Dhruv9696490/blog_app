@@ -13,6 +13,10 @@ I’ve been working on a Flutter blog app following Clean Architecture and SOLID
   <li>Supabase for authentication & storing user blogs</li>
   <li>Hive for local storage</li>
 </ul>
+<a href="https://www.linkedin.com/feed/update/urn:li:activity:7422956464492761088/" target="_blank">
+  View my LinkedIn post
+</a>
+<br>
 This project helped me deepen my understanding of Clean architecture, state management, and real-world app structure.
 <br>
 <h2>App Features: </h2>
