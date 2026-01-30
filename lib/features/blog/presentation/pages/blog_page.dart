@@ -60,8 +60,8 @@ class _BlogPageState extends State<BlogPage> {
                   final item = state.blogs[index];
                     return BlogCard(blog: item,color: index % 2 == 0
                     ? AppPallete.gradient1
-                        : AppPallete.gradient2, voidCallback:
-                        () => context.read<BlogBloc>().add(DeleteBlogEvent(blogId: item.id)),
+                        : AppPallete.gradient2, 
+                        voidCallback:() => context.read<BlogBloc>().add(DeleteBlogEvent(blogId: item.id)),
                     );
                   }),
             );

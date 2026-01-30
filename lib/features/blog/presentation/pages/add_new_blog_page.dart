@@ -78,12 +78,11 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
         listener: (context, state) {
           if (state is BlogFailure) {
             addMessage(context, state.error);
-          } else if (state is BlogUploadSuccess) {
+          } else if (state is BlogUploadSuccess){
             Navigator.pushAndRemoveUntil(
               context,
               BlogPage.route(),
-              (_) => false,
-            );
+              (_) => false);
           }
         },
         builder: (context, state) {

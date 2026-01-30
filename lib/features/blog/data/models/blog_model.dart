@@ -11,7 +11,7 @@ class BlogModel extends Blog {
     required super.updateAt,
     super.posterName
   });
-  Map<String, dynamic> toJson() {
+  Map<dynamic, dynamic> toJson() {
     return {
       'id': id,
       'poster_id': posterId,
@@ -23,7 +23,7 @@ class BlogModel extends Blog {
     };
   }
 
-  factory BlogModel.fromJson(Map<String, dynamic> map) {
+  factory BlogModel.fromJson(Map<dynamic, dynamic> map) {
     return BlogModel(
       id: (map['id'] ?? '').toString(),
       posterId: (map['poster_id'] ?? '').toString(),

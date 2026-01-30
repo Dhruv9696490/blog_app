@@ -18,9 +18,11 @@ class BlogRepositoryImplementation implements BlogRepository {
   final BlogLocalDataSource blogLocalDataSource;
   final ConnectionChecker connectionChecker;
 
-  BlogRepositoryImplementation(this.blogRemoteDataSource,
-      this.blogLocalDataSource,
-      this.connectionChecker,);
+  BlogRepositoryImplementation(
+    this.blogRemoteDataSource,
+    this.blogLocalDataSource,
+    this.connectionChecker,
+  );
 
   @override
   Future<Either<Failure, Blog>> uploadBlog({
@@ -45,7 +47,8 @@ class BlogRepositoryImplementation implements BlogRepository {
       );
       final url = await blogRemoteDataSource.uploadImage(image, blogModel);
       final blogResponse = await blogRemoteDataSource.uploadBlog(
-          blogModel.copyWith(imageUrl: url));
+        blogModel.copyWith(imageUrl: url),
+      );
       return right(blogResponse);
     } on ServerException catch (e) {
       return left(Failure(e.error));
@@ -57,6 +60,7 @@ class BlogRepositoryImplementation implements BlogRepository {
     try {
       if (!await (connectionChecker.isConnected)) {
         final blogs = blogLocalDataSource.loadBlogs();
+        if (blogs.isEmpty) return right([]);
         return right(blogs);
       }
       final res = await blogRemoteDataSource.getAllBlogs();
@@ -68,10 +72,11 @@ class BlogRepositoryImplementation implements BlogRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteBlog(String blogId) async {
+  Future<Either<Failure, List<Blog>>> deleteBlog(String blogId) async {
     try {
       await blogRemoteDataSource.deleteBlog(blogId);
-      return Right(null);
+      final res = await blogRemoteDataSource.getAllBlogs();
+      return right(res);
     } on ServerException catch (e) {
       return left(Failure(e.error));
     }

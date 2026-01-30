@@ -51,9 +51,13 @@ class BlogRemoteDataSourceImplementation implements BlogRemoteDataSource{
 
   @override
   Future<void> deleteBlog(String blogId) async {
-    final response = await supabaseClient.from('blogs').delete().eq('id',blogId);
+    try{
+      final response = await supabaseClient.from('blogs').delete().eq('id',blogId);
     if(response!=null){
       throw ServerException('delete not working');
+    }
+    }catch(e){
+      throw ServerException(e.toString());
     }
   }
 }

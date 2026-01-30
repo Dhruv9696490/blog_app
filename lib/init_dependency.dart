@@ -30,12 +30,12 @@ Future<void> initDependencies() async {
     anonKey: AppSecret.supabaseAnon,
   );
 
-  await Hive.initFlutter("blogs");
-  await Hive.openBox('blogs');
+  await Hive.initFlutter();
+  final box = await Hive.openBox('blogs');
   // Register adapters
 
   serviceLocator.registerLazySingleton<SupabaseClient>(() => supaBase.client);
-  serviceLocator.registerLazySingleton(() => Hive.box('blogs'));
+  serviceLocator.registerLazySingleton(() => box);
   serviceLocator.registerFactory(() => InternetConnection());
 
   // core
