@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/core/usecases/usecase.dart';
@@ -22,7 +22,7 @@ class UploadBlog implements UseCase<Blog, UploadBlogParam> {
 }
 
 class UploadBlogParam {
-  final File image;
+  final Uint8List image;
   final String title;
   final String content;
   final String posterId;

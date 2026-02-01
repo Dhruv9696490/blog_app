@@ -25,7 +25,7 @@ class AppTheme{
 
       ),
       chipTheme: ChipThemeData(
-        color: MaterialStatePropertyAll(AppPallete.backgroundColor)
+        color: WidgetStatePropertyAll(AppPallete.backgroundColor)
           // labelPadding: EdgeInsets.symmetric(vertical: 3,horizontal: 7),
     )
     );

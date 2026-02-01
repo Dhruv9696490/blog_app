@@ -11,7 +11,7 @@ class GetCurrentUser implements UseCase<User,NoParam> {
   final AuthRepository authRepository;
   GetCurrentUser(this.authRepository);
   @override
-  Future<Either<Failure, User>> call(NoParam params) {
+  Future<Either<Failure, User>> call(NoParam params){
        return authRepository.getCurrentUser();
   }
 }

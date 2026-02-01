@@ -45,7 +45,6 @@ class AuthRepositoryImplementation implements AuthRepository{
   @override
   Future<Either<Failure, User>> getCurrentUser() async{
         try{
-
           if (!await (connectionChecker.isConnected)) {
             final session = authRemoteDataSource.userCurrentSession;
 

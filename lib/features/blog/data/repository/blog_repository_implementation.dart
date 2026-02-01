@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:blog_app/core/error/exception.dart';
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/features/blog/data/datasources/bloc_remote_data_source.dart';
 import 'package:blog_app/features/blog/data/models/blog_model.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
 import 'package:blog_app/features/blog/domain/repository/blog_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,7 +14,7 @@ import '../datasources/blog_local_data_source.dart';
 
 class BlogRepositoryImplementation implements BlogRepository {
   final BlogRemoteDataSource blogRemoteDataSource;
-  final BlogLocalDataSource blogLocalDataSource;
+  final BlogLocalDataSource? blogLocalDataSource;
   final ConnectionChecker connectionChecker;
 
   BlogRepositoryImplementation(
@@ -26,7 +25,7 @@ class BlogRepositoryImplementation implements BlogRepository {
 
   @override
   Future<Either<Failure, Blog>> uploadBlog({
-    required File image,
+    required Uint8List image,
     required String title,
     required String content,
     required String posterId,
@@ -59,12 +58,14 @@ class BlogRepositoryImplementation implements BlogRepository {
   Future<Either<Failure, List<Blog>>> getAllBlogs() async {
     try {
       if (!await (connectionChecker.isConnected)) {
-        final blogs = blogLocalDataSource.loadBlogs();
+        final blogs = blogLocalDataSource?.loadBlogs() ?? [];
         if (blogs.isEmpty) return right([]);
         return right(blogs);
       }
       final res = await blogRemoteDataSource.getAllBlogs();
-      blogLocalDataSource.uploadLocalBlogs(blogs: res);
+      if (!kIsWeb) {
+        blogLocalDataSource?.uploadLocalBlogs(blogs: res);
+      }
       return right(res);
     } on ServerException catch (e) {
       return left(Failure(e.error));
@@ -77,6 +78,45 @@ class BlogRepositoryImplementation implements BlogRepository {
       await blogRemoteDataSource.deleteBlog(blogId);
       final res = await blogRemoteDataSource.getAllBlogs();
       return right(res);
+    } on ServerException catch (e) {
+      return left(Failure(e.error));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Blog>> updateBlog({
+    required String id,
+    required Uint8List? image,
+    required String? imageUrl,
+    required String title,
+    required String content,
+    required String posterId,
+    required List<String> topics,
+  }) async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
+      final blog = BlogModel(
+        id: id,
+        posterId: posterId,
+        title: title,
+        content: content,
+        imageUrl: imageUrl ?? '',
+        topics: topics,
+        updateAt: DateTime.now(),
+      );
+      if(imageUrl != null && image==null ) {
+        final newblog = await blogRemoteDataSource.updateBlog(
+          blog.copyWith(imageUrl: imageUrl),
+        );
+        return right(newblog);
+      }
+      final url = await blogRemoteDataSource.uploadImage(image!, blog);
+      final blog1 = await blogRemoteDataSource.updateBlog(
+        blog.copyWith(imageUrl: url),
+      );
+      return right(blog1);
     } on ServerException catch (e) {
       return left(Failure(e.error));
     }

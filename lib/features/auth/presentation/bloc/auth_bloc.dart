@@ -57,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final  Either<Failure, User> user = await _getCurrentUser(NoParam());
       user.fold(
               (l)=> emit(AuthFailure(error: l.error))
-          ,(r)=> _updatingUser(r,emit)
+             ,(r)=> _updatingUser(r,emit)
       );
   }
   void _updatingUser(User user,Emitter<AuthState> emit){

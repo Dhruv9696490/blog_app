@@ -13,8 +13,10 @@ import 'package:blog_app/features/blog/data/repository/blog_repository_implement
 import 'package:blog_app/features/blog/domain/repository/blog_repository.dart';
 import 'package:blog_app/features/blog/domain/usecases/delete_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs.dart';
+import 'package:blog_app/features/blog/domain/usecases/update_blog.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -29,13 +31,15 @@ Future<void> initDependencies() async {
     url: AppSecret.supabaseUrl,
     anonKey: AppSecret.supabaseAnon,
   );
+  if (!kIsWeb) {
+    await Hive.initFlutter();
+    final box = await Hive.openBox('blogs');
+    serviceLocator.registerLazySingleton(() => box);
+  }
 
-  await Hive.initFlutter();
-  final box = await Hive.openBox('blogs');
   // Register adapters
 
   serviceLocator.registerLazySingleton<SupabaseClient>(() => supaBase.client);
-  serviceLocator.registerLazySingleton(() => box);
   serviceLocator.registerFactory(() => InternetConnection());
 
   // core
@@ -73,18 +77,19 @@ void _initAuth() {
 }
 
 void _initBlog() {
-  serviceLocator
-    ..registerFactory<BlogRemoteDataSource>(
-      () =>
-          BlogRemoteDataSourceImplementation(serviceLocator<SupabaseClient>()),
-    )
-    ..registerFactory<BlogLocalDataSource>(
+  serviceLocator.registerFactory<BlogRemoteDataSource>(
+    () => BlogRemoteDataSourceImplementation(serviceLocator<SupabaseClient>()),
+  );
+  if (!kIsWeb) {
+    serviceLocator.registerFactory<BlogLocalDataSource>(
       () => BlogLocalDataSourceImpl(serviceLocator()),
-    )
+    );
+  }
+  serviceLocator
     ..registerFactory<BlogRepository>(
       () => BlogRepositoryImplementation(
         serviceLocator<BlogRemoteDataSource>(),
-        serviceLocator<BlogLocalDataSource>(),
+       (kIsWeb) ? null : serviceLocator<BlogLocalDataSource>(),
         serviceLocator<ConnectionChecker>(),
       ),
     )
@@ -97,11 +102,15 @@ void _initBlog() {
     ..registerFactory<DeleteBlog>(
       () => DeleteBlog(serviceLocator<BlogRepository>()),
     )
+    ..registerFactory<UpdateBlog>(
+      () => UpdateBlog(serviceLocator<BlogRepository>()),
+    )
     ..registerLazySingleton(
       () => BlogBloc(
         uploadBlog: serviceLocator<UploadBlog>(),
         getAllBlogs: serviceLocator<GetAllBlogs>(),
         deleteBlog: serviceLocator<DeleteBlog>(),
+        updateBlog: serviceLocator<UpdateBlog>()
       ),
     );
 }

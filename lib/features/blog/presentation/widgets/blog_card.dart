@@ -8,16 +8,19 @@ import '../pages/blog_viewer_page.dart';
 class BlogCard extends StatelessWidget {
   final Blog blog;
   final Color color;
-  final VoidCallback voidCallback;
+  final VoidCallback deleteCallback;
+  final VoidCallback editCallback;
   const BlogCard({
     super.key,
     required this.blog,
     required this.color,
-    required this.voidCallback,
+    required this.deleteCallback,
+    required this.editCallback
   });
 
   @override
   Widget build(BuildContext context) {
+      final widthSize = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
         Navigator.push(context, BlogViewerPage.route(blog));
@@ -33,44 +36,46 @@ class BlogCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: blog.topics
-                              .map(
-                                (e) => Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Chip(label: Text(e)),
-                            ),
-                          )
-                              .toList(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: blog.topics
+                          .map(
+                            (e) => Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Chip(label: Text(e,style: TextStyle(fontSize: !(widthSize > 667) ? 16 : widthSize*0.02),)),
                         ),
-                      ),
+                      )   .toList(),
                     ),
-                    IconButton(onPressed: voidCallback,
-                        icon: Icon(Icons.delete,color: Colors.white,size: 30,))
-                  ],
+                  ),
                 ),
-                Text(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(onPressed: editCallback,
+                      icon: Icon(Icons.edit,color: Colors.white,size: !(widthSize > 667) ? 40 : widthSize*0.05, )),
+                ),
+                IconButton(onPressed: deleteCallback,
+                    icon: Icon(Icons.delete,color: Colors.white,size: !(widthSize > 667) ? 40 : widthSize*0.05, ))
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
                   blog.title,
-                  style: const TextStyle(
-                    fontSize: 22,
+                  style:  TextStyle(
+                    fontSize: !(widthSize > 667) ? 20 : widthSize*0.02,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
+              ),
             ),
-            Text('${calculateReadingTime(blog.content)} min'),
+            Text('${calculateReadingTime(blog.content)} min',style: TextStyle(fontSize: !(widthSize > 667) ? 16 : widthSize*0.02)),
           ],
         ),
       ),
