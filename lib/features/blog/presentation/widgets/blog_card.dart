@@ -28,9 +28,10 @@ class BlogCard extends StatelessWidget {
       child: Container(
         height: 200,
         margin: const EdgeInsets.all(16).copyWith(
-          bottom: 4,
+          top: 0,
+          bottom: 20
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(10),
@@ -55,14 +56,7 @@ class BlogCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(onPressed: editCallback,
-                      icon: Icon(Icons.edit,color: Colors.white,size: !(widthSize > 667) ? 40 : widthSize*0.05, )),
-                ),
-                IconButton(onPressed: deleteCallback,
-                    icon: Icon(Icons.delete,color: Colors.white,size: !(widthSize > 667) ? 40 : widthSize*0.05, ))
-              ],
+                ],
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -74,8 +68,20 @@ class BlogCard extends StatelessWidget {
                   ),
                 ),
               ),
+            ),            
+            Row(
+              children: [
+                Text('By ${blog.posterName!.split(' ')[0]}',style: TextStyle(fontSize: !(widthSize > 667) ? 16 : widthSize*0.02)),
+                Spacer(),
+                 Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(onPressed: editCallback,
+                      icon: Icon(Icons.edit,color: Colors.white,size: !(widthSize > 667) ? 30 : widthSize*0.05, )),
+                ),
+                IconButton(onPressed: deleteCallback,
+                    icon: Icon(Icons.delete,color: Colors.white,size: !(widthSize > 667) ? 30 : widthSize*0.05, ))
+              ],
             ),
-            Text('${calculateReadingTime(blog.content)} min',style: TextStyle(fontSize: !(widthSize > 667) ? 16 : widthSize*0.02)),
           ],
         ),
       ),

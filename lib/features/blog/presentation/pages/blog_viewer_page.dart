@@ -1,6 +1,7 @@
 import 'package:blog_app/core/theme/app_pallete.dart';
 import 'package:blog_app/core/utils/calculate_reading_time.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/utils/date_and_time.dart';
@@ -53,6 +54,12 @@ class BlogViewerPage extends StatelessWidget {
                   child: Image.network(
                     '${blog.imageUrl}?t=${DateTime.now().millisecondsSinceEpoch}',
                     errorBuilder: (_, __, ___) => Icon(Icons.broken_image),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return  Center(child: CupertinoActivityIndicator());
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),

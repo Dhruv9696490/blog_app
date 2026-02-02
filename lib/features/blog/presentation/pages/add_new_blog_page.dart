@@ -1,4 +1,5 @@
 import 'package:blog_app/core/common/cubit/app_user/app_user_cubit.dart';
+import 'package:blog_app/core/constants/constants.dart';
 import 'package:blog_app/core/theme/app_pallete.dart';
 import 'package:blog_app/core/utils/loading.dart';
 import 'package:blog_app/core/utils/show_message.dart';
@@ -7,6 +8,7 @@ import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/blog_editor_field.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -125,7 +127,6 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
         listener: (context, state) {
           if (state is BlogFailure) {
             addMessage(context, state.error);
-            print(state.error);
           } else if (state is BlogUploadSuccess) {
             Navigator.pushAndRemoveUntil(
               context,
@@ -167,6 +168,15 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                                 child: Image.network(
                                   widget.blog!.imageUrl,
                                   fit: BoxFit.fill,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return Center(
+                                          child: CupertinoActivityIndicator(),
+                                        );
+                                      },
                                 ),
                               ),
                             )
@@ -199,48 +209,41 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children:
-                            [
-                              'Technology',
-                              'Business',
-                              'Programming',
-                              'Entertainment',
-                            ].map((e) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (blogCategory.contains(e)) {
-                                      blogCategory.remove(e);
-                                    } else {
-                                      blogCategory.add(e);
-                                    }
-                                    setState(() {});
-                                  },
-                                  child: Chip(
-                                    padding: EdgeInsets.all(0),
-                                    label: Text(
-                                      e,
-                                      style: TextStyle(
-                                        fontSize: !(widthSize > 667)
-                                            ? 16
-                                            : widthSize * 0.018,
-                                      ),
-                                    ),
-                                    side: BorderSide(
-                                      color: AppPallete.borderColor,
-                                    ),
-                                    color: blogCategory.contains(e)
-                                        ? WidgetStatePropertyAll(
-                                            AppPallete.gradient1,
-                                          )
-                                        : WidgetStatePropertyAll(
-                                            AppPallete.backgroundColor,
-                                          ),
+                        children: Constants.topics.map((e) {
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (blogCategory.contains(e)) {
+                                  blogCategory.remove(e);
+                                } else {
+                                  blogCategory.add(e);
+                                }
+                                setState(() {});
+                              },
+                              child: Chip(
+                                labelPadding: EdgeInsets.fromLTRB(14, 4, 14, 4),
+                                padding: EdgeInsets.all(0),
+                                label: Text(
+                                  e,
+                                  style: TextStyle(
+                                    fontSize: !(widthSize > 667)
+                                        ? 16
+                                        : widthSize * 0.018,
                                   ),
                                 ),
-                              );
-                            }).toList(),
+                                side: BorderSide(color: AppPallete.borderColor),
+                                color: blogCategory.contains(e)
+                                    ? WidgetStatePropertyAll(
+                                        AppPallete.gradient1,
+                                      )
+                                    : WidgetStatePropertyAll(
+                                        AppPallete.backgroundColor,
+                                      ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
                     BlogEditorField(

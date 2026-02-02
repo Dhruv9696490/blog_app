@@ -72,7 +72,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: 15,),
                         AuthField(controller: emailController, hintText: 'Email'),
                         SizedBox(height: 15,),
-                        AuthField(controller: passwordController, hintText: 'Password',obscure: true,),
+                        AuthField(controller: passwordController, hintText: 'Password',isPassword: true,),
                         SizedBox(height: 15,),
                         AuthGradientButton(onPressed: (){
                           BlocProvider.of<AuthBloc>(context).add(SignUpEvent(
