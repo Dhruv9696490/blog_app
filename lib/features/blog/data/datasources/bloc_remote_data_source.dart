@@ -45,16 +45,19 @@ class BlogRemoteDataSourceImplementation implements BlogRemoteDataSource {
 
   @override
   Future<String> uploadImage(Uint8List imageBytes, BlogModel blog) async {
-    final path = '${blog.id}_${DateTime.now().millisecondsSinceEpoch}.png';
-
+    final path = 'blogs/${blog.id}.png';
     try {
+      await supabaseClient.storage.from('blog_images').remove([path]);
+
       await supabaseClient.storage
           .from('blog_images')
           .uploadBinary(
             path,
             imageBytes,
-            fileOptions: const FileOptions(contentType: 'image/png',upsert: true),
-            
+            fileOptions: const FileOptions(
+              contentType: 'image/png',
+              upsert: true,
+            ),
           );
       return supabaseClient.storage.from('blog_images').getPublicUrl(path);
     } catch (e) {
@@ -84,11 +87,13 @@ class BlogRemoteDataSourceImplementation implements BlogRemoteDataSource {
 
   @override
   Future<void> deleteBlog(String blogId) async {
+    final path = 'blogs/$blogId.png';
     try {
       final response = await supabaseClient
           .from('blogs')
           .delete()
           .eq('id', blogId);
+      await supabaseClient.storage.from('blog_images').remove([path]);
       if (response != null) {
         throw ServerException('delete not working');
       }

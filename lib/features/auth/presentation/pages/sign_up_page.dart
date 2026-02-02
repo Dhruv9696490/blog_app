@@ -91,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       color: AppPallete.gradient1
                                   ),
                                   recognizer: TapGestureRecognizer()..onTap = (){
-                                    Navigator.push(context, LoginPage.route());
+                                    Navigator.pushAndRemoveUntil(context, LoginPage.route(),(_)=>false);
                                   }
                               ),
                             ]

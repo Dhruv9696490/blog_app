@@ -8,7 +8,9 @@ import 'package:blog_app/features/auth/presentation/pages/login_page.dart';
 import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/add_new_blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/blog_card.dart';
+import 'package:blog_app/features/blog/presentation/widgets/blog_drawer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,67 +39,9 @@ class _BlogPageState extends State<BlogPage> {
   @override
   Widget build(BuildContext context) {
     final widthSize = MediaQuery.of(context).size.width;
-    final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
+    // final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
     return Scaffold(
-      drawer: Drawer(
-        width: 300,
-        backgroundColor: AppPallete.backgroundColor,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 60, 8, 0),
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/account-avatar-profile-user_c9tjfk.svg',
-                ),
-                title: Text(
-                  user.name,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  user.email,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-            Divider(thickness: 2),
-            SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppPallete.gradient1, AppPallete.gradient2],
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(LogOutEvent(userId: user.id));
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(250, 57),
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Log Out ',
-                      style: TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Icon(Icons.login_outlined, fontWeight: FontWeight.bold),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      drawer: BlogDrawer(),
       appBar: AppBar(
         leading: Builder(
           builder: (context) {
@@ -161,14 +105,14 @@ class _BlogPageState extends State<BlogPage> {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+                    padding: kIsWeb ?  const EdgeInsets.fromLTRB(8, 0, 16, 0) : const EdgeInsets.fromLTRB(8, 0, 8, 0),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: Constants.topics.map((label) {
                           return Padding(
-                            padding: const EdgeInsets.fromLTRB(6, 6, 8, 6),
+                            padding: kIsWeb ? const EdgeInsets.fromLTRB(6, 6, 8, 6)  :  const EdgeInsets.fromLTRB(6, 0, 0, 0)   ,
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -183,7 +127,6 @@ class _BlogPageState extends State<BlogPage> {
                                 label: Text(
                                   label,
                                   style: TextStyle(
-                                    fontSize: 17,
                                     color: currentTab.contains(label)
                                         ? Colors.black
                                         : null,

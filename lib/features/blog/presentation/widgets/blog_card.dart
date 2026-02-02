@@ -1,8 +1,8 @@
-
+import 'package:blog_app/core/common/cubit/app_user/app_user_cubit.dart';
 import 'package:blog_app/features/blog/domain/entities/blog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/calculate_reading_time.dart';
 import '../pages/blog_viewer_page.dart';
 
 class BlogCard extends StatelessWidget {
@@ -15,22 +15,20 @@ class BlogCard extends StatelessWidget {
     required this.blog,
     required this.color,
     required this.deleteCallback,
-    required this.editCallback
+    required this.editCallback,
   });
 
   @override
   Widget build(BuildContext context) {
-      final widthSize = MediaQuery.of(context).size.width;
+    final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
+    final widthSize = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
         Navigator.push(context, BlogViewerPage.route(blog));
       },
       child: Container(
         height: 200,
-        margin: const EdgeInsets.all(16).copyWith(
-          top: 0,
-          bottom: 20
-        ),
+        margin: const EdgeInsets.all(16).copyWith(top: 0, bottom: 20),
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         decoration: BoxDecoration(
           color: color,
@@ -49,37 +47,77 @@ class BlogCard extends StatelessWidget {
                       children: blog.topics
                           .map(
                             (e) => Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Chip(label: Text(e,style: TextStyle(fontSize: !(widthSize > 667) ? 16 : widthSize*0.02),)),
-                        ),
-                      )   .toList(),
+                              padding: const EdgeInsets.all(5.0),
+                              child: Chip(
+                                label: Text(
+                                  e,
+                                  style: TextStyle(
+                                    fontSize: !(widthSize > 667)
+                                        ? 16
+                                        : widthSize * 0.02,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                 ),
-                ],
+              ],
             ),
             Expanded(
               child: SingleChildScrollView(
                 child: Text(
                   blog.title,
-                  style:  TextStyle(
-                    fontSize: !(widthSize > 667) ? 20 : widthSize*0.02,
+                  style: TextStyle(
+                    fontSize: !(widthSize > 667) ? 20 : widthSize * 0.02,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),            
+            ),
             Row(
               children: [
-                Text('By ${blog.posterName!.split(' ')[0]}',style: TextStyle(fontSize: !(widthSize > 667) ? 16 : widthSize*0.02)),
-                Spacer(),
-                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(onPressed: editCallback,
-                      icon: Icon(Icons.edit,color: Colors.white,size: !(widthSize > 667) ? 30 : widthSize*0.05, )),
+                Padding(
+                  padding: user.id != blog.posterId
+                      ? EdgeInsets.fromLTRB(0, 0, 0, 16)
+                      : EdgeInsets.all(0),
+                  child: Text(
+                  user.id == blog.posterId ? 'By ${blog.posterName!.split(' ')[0]} (You)' : 'By ${blog.posterName!.split(' ')[0]}' ,
+                    style: TextStyle(
+                      fontSize: !(widthSize > 667) ? 16 : widthSize * 0.02,
+                    ),
+                  ),
                 ),
-                IconButton(onPressed: deleteCallback,
-                    icon: Icon(Icons.delete,color: Colors.white,size: !(widthSize > 667) ? 30 : widthSize*0.05, ))
+                Spacer(),
+                user.id == blog.posterId
+                    ? Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton(
+                              onPressed: editCallback,
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: !(widthSize > 667)
+                                    ? 30
+                                    : widthSize * 0.05,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: deleteCallback,
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                              size: !(widthSize > 667) ? 30 : widthSize * 0.05,
+                            ),
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
               ],
             ),
           ],

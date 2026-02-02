@@ -49,17 +49,19 @@ class BlogViewerPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    '${blog.imageUrl}?t=${DateTime.now().millisecondsSinceEpoch}',
-                    errorBuilder: (_, __, ___) => Icon(Icons.broken_image),
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      }
-                      return  Center(child: CupertinoActivityIndicator());
-                    },
+                Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      blog.imageUrl,
+                      errorBuilder: (_, __, ___) => Icon(Icons.broken_image),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
+                        return  Center(child: CupertinoActivityIndicator());
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
