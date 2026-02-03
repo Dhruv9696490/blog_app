@@ -4,7 +4,7 @@ import 'package:blog_app/features/auth/data/datasources/auth_remote_data_source.
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../core/common/entities/User.dart';
+import '../../../../core/common/entities/user.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/network/connection_checker.dart';
 import '../model/user_model.dart';

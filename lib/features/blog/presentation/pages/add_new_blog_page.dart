@@ -8,7 +8,6 @@ import 'package:blog_app/features/blog/presentation/bloc/blog/blog_bloc.dart';
 import 'package:blog_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/blog_editor_field.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -174,7 +173,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                                           return child;
                                         }
                                         return Center(
-                                          child: CupertinoActivityIndicator(),
+                                          child: LinearProgressIndicator(),
                                         );
                                       },
                                 ),
