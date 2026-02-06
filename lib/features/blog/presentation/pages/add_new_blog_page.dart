@@ -173,7 +173,10 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                                           return child;
                                         }
                                         return Center(
-                                          child: LinearProgressIndicator(),
+                                          child: SizedBox(
+                                            height: 4,
+                                            child: LinearProgressIndicator(),
+                                          ),
                                         );
                                       },
                                 ),

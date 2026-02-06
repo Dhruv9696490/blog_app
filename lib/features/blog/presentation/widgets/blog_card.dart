@@ -53,8 +53,9 @@ class BlogCard extends StatelessWidget {
                                   e,
                                   style: TextStyle(
                                     fontSize: !(widthSize > 667)
-                                        ? 16
+                                        ? 12
                                         : widthSize * 0.02,
+                                        fontWeight: FontWeight.w600
                                   ),
                                 ),
                               ),
